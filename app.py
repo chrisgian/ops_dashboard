@@ -10,74 +10,56 @@ links.
 For more details on building multi-page Dash applications, check out the Dash
 documentation: https://dash.plot.ly/urls
 """
+
 import dash
 import dash_bootstrap_components as dbc
-import dash_core_components as dcc
-import dash_html_components as html
 from dash.dependencies import Input, Output
+import dash_html_components as html
+from flask import Flask, send_from_directory
+import os
 
-# Markdown text
+# custom
+from tools import *
+from layout import *
 
+# chunk here is from https://docs.faculty.ai/user-guide/apps/examples/dash_file_upload_download.html
 
-#  App instantiate
-app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+if not os.path.exists(UPLOAD_DIRECTORY):
+    os.makedirs(UPLOAD_DIRECTORY)
 
-# the style arguments for the sidebar. We use position:fixed and a fixed width
-SIDEBAR_STYLE = {
-    "position": "fixed",
-    "top": 0,
-    "left": 0,
-    "bottom": 0,
-    "width": "16rem",
-    "padding": "2rem 1rem",
-    "background-color": "#f8f9fa",
-}
+# Normally, Dash creates its own Flask server internally. By creating our own,
+# we can create a route for downloading files directly:
+server = Flask(__name__)
+app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP], server=server)
+app.config.suppress_callback_exceptions = True
+app.layout = html.Div([url, page_sidebar, content])
 
-# the styles for the main content position it to the right of the sidebar and
-# add some padding.
-CONTENT_STYLE = {
-    "margin-left": "18rem",
-    "margin-right": "2rem",
-    "padding": "2rem 1rem",
-}
+# -- Download Handler Reactions --- #
+@server.route("/download/<path:path>")
+def download(path):
+    """Serve a file from the upload directory."""
+    return send_from_directory(UPLOAD_DIRECTORY, path, as_attachment=True)
 
-
-sidebar = html.Div(
-    [
-        dcc.Markdown(
-            '''
-            # Prototype App: Sidebar
-            [Dash Core Components Example: Sidebar Layout](https://dash-bootstrap-components.opensource.faculty.ai/examples/simple-sidebar/)
-            '''),
-        html.Hr(),
-
-        dbc.Nav(
-            [
-                html.Div(['Explore']),
-                dbc.NavLink("View Existing", href="/page-5", id="page-5-link"),
-                html.Div(['Data Management']),
-                dbc.NavLink("Create New", href="/page-1", id="page-1-link"),
-                dbc.NavLink("Read New", href="/page-2", id="page-2-link"),
-                dbc.NavLink("Update Existing",
-                            href="/page-3", id="page-3-link"),
-                dbc.NavLink("Delete Existing",
-                            href="/page-4", id="page-4-link")
-
-            ],
-            vertical=True,
-            pills=True,
-        ),
-    ],
-    style=SIDEBAR_STYLE,
+@app.callback(
+    Output("file-list", "children"),
+    [Input("upload-data", "filename"),
+     Input("upload-data", "contents")],
 )
+def update_output(uploaded_filenames, uploaded_file_contents):
+    """Save uploaded files and regenerate the file list."""
 
-content = html.Div(id="page-content", style=CONTENT_STYLE)
+    if uploaded_filenames is not None and uploaded_file_contents is not None:
+        for name, data in zip(uploaded_filenames, uploaded_file_contents):
+            save_file(name, data)
 
-app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
+    files = uploaded_files()
+    if len(files) == 0:
+        return [html.Li("No files yet!")]
+    else:
+        return [html.Li(file_download_link(filename)) for filename in files]
 
+# ----- Download Handler Reactions ----- #
 
-# this callback uses the current pathname to set the active state of the
-# corresponding nav link to true, allowing users to tell see page they are on
 @app.callback(
     [Output(f"page-{i}-link", "active") for i in range(1, 4)],
     [Input("url", "pathname")],
@@ -87,76 +69,6 @@ def toggle_active_links(pathname):
         # Treat page 1 as the homepage / index
         return True, False, False
     return [pathname == f"/page-{i}" for i in range(1, 4)]
-
-
-# ------ VIEW: PAGE ------- #
-page_view = html.Div(
-    [
-        html.H1('Explore Existing Data'),
-        html.P("Oh cool, this is page 4!"),
-        dbc.Row(dbc.Col(html.Div("A single column"))),
-
-        dbc.Row(
-            [
-                dbc.Col(dcc.Slider()),
-                dbc.Col(
-
-                    dcc.Dropdown(
-                        options=[
-                            {'label': 'New York City', 'value': 'NYC'},
-                            {'label': 'Montreal', 'value': 'MTL'},
-                            {'label': 'San Francisco', 'value': 'SF'}
-                        ],
-                        value=['MTL', 'NYC'],
-                        multi=False
-                    )
-
-                ),
-                dbc.Col(dcc.Dropdown(
-                    options=[
-                        {'label': 'New York City', 'value': 'NYC'},
-                        {'label': 'Montreal', 'value': 'MTL'},
-                        {'label': 'San Francisco', 'value': 'SF'}
-                    ],
-                    value=['MTL', 'NYC'],
-                    multi=True
-                )),
-            ]
-        ),
-
-    ]
-)
-
-
-# ------ View: Create ------ #
-page_create = html.Div([
-    dcc.Upload(
-        id='upload-data',
-        children=html.Div([
-            'Drag and Drop or ',
-            html.A('Select Files')
-        ]),
-        style={
-            'width': '100%',
-            'height': '60px',
-            'lineHeight': '60px',
-            'borderWidth': '1px',
-            'borderStyle': 'dashed',
-            'borderRadius': '5px',
-            'textAlign': 'center',
-            'margin': '10px'
-        },
-        # Allow multiple files to be uploaded
-        multiple=True
-    ),
-    html.Div(id='output-data-upload'),
-])
-
-
-# ------ VIEW: OTHER ------- #
-page_delete = html.P("Oh cool, this is page 4!")
-page_update = html.P("Oh cool, this is page 3!")
-
 
 
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
