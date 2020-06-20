@@ -1,3 +1,8 @@
 .ipynb_checkpoints/
 .vscode/
 update_req.sh
+__pycache__/
+*.pyc
+*.csv
+.DS_Store
+*.code-workspace
