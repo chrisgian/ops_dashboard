@@ -29,16 +29,31 @@ if not os.path.exists(UPLOAD_DIRECTORY):
 
 # Normally, Dash creates its own Flask server internally. By creating our own,
 # we can create a route for downloading files directly:
+
 server = Flask(__name__)
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP], server=server)
 app.config.suppress_callback_exceptions = True
 app.layout = html.Div([url, page_sidebar, content])
 
+# --  x
+@app.callback(
+    Output('opt-dropdown', 'options'),
+    [Input("upload-data", "filename")],
+)
+def update_dropdown(uploaded_filenames):
+    return [
+        {'label': 'New York City', 'value': 'NYC'},
+        {'label': 'Montreal', 'value': 'MTL'},
+        {'label': 'San Francisco', 'value': 'SF'}]
+
 # -- Download Handler Reactions --- #
+
+
 @server.route("/download/<path:path>")
 def download(path):
     """Serve a file from the upload directory."""
     return send_from_directory(UPLOAD_DIRECTORY, path, as_attachment=True)
+
 
 @app.callback(
     Output("file-list", "children"),
@@ -53,12 +68,13 @@ def update_output(uploaded_filenames, uploaded_file_contents):
             save_file(name, data)
 
     files = uploaded_files()
+
     if len(files) == 0:
         return [html.Li("No files yet!")]
     else:
         return [html.Li(file_download_link(filename)) for filename in files]
 
-# ----- Download Handler Reactions ----- #
+
 
 @app.callback(
     [Output(f"page-{i}-link", "active") for i in range(1, 4)],
