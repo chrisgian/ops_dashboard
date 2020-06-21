@@ -1,11 +1,33 @@
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
-from styles import *
+from styles import SIDEBAR_STYLE
 
-# -- UI --#
-url = dcc.Location(id="url")
+# ------ VIEW: Explore ------- #
+page_view = html.Div(
+    [
+        html.H1('Explore Existing Data'),
+        html.P("Oh cool, this is page 5!"),
+        dbc.Row(dbc.Col(html.Div("A single column"))),
 
+        dbc.Row(
+            [
+                dbc.Col(dcc.Slider()),
+                dbc.Col(
+                    dcc.Dropdown(
+                        options=[
+                            {'label': 'New York City', 'value': 'NYC'},
+                            {'label': 'Montreal', 'value': 'MTL'},
+                            {'label': 'San Francisco', 'value': 'SF'}]
+                    )
+                ),
+                dbc.Col(
+
+                )
+            ]
+        )
+    ]
+)
 # ------ VIEW: SIDEBAR ------- #
 
 page_sidebar = html.Div(
@@ -36,49 +58,34 @@ page_sidebar = html.Div(
     style=SIDEBAR_STYLE,
 )
 
-# ------ VIEW: Explore ------- #
-page_view = html.Div(
-    [
-        html.H1('Explore Existing Data'),
-        html.P("Oh cool, this is page 5!"),
-        dbc.Row(dbc.Col(html.Div("A single column"))),
-
-        dbc.Row(
-            [
-                dbc.Col(dcc.Slider()),
-                dbc.Col(
-
-                    dcc.Dropdown(
-                        options=[
-                            {'label': 'New York City', 'value': 'NYC'},
-                            {'label': 'Montreal', 'value': 'MTL'},
-                            {'label': 'San Francisco', 'value': 'SF'}
-                        ],
-                        value=['MTL', 'NYC'],
-                        multi=False
-                    )
-
-                ),
-                dbc.Col(dcc.Dropdown(
-                    options=[
-                        {'label': 'New York City', 'value': 'NYC'},
-                        {'label': 'Montreal', 'value': 'MTL'},
-                        {'label': 'San Francisco', 'value': 'SF'}
-                    ],
-                    value=['MTL', 'NYC'],
-                    multi=True
-                )),
-            ]
-        ),
-
-    ]
-)
 
 # ------ VIEW: OTHER ------- #
 page_delete = html.P("Oh cool, this is page 4!")
 
 # ------ VIEW: EDIT ------- #
-page_update = html.P("Oh cool, this is page 3!")
+page_update = html.Div(children=[
+
+    html.H1(children='Hello Dash'),
+
+    html.Div(children='''Dash: A web application framework for Python.'''),
+
+    dcc.Dropdown(
+        id='dropdown',
+        options=[
+            {'label': i, 'value': i} for i in ['SEA', 'LAX', 'SF', 'PHL', 'PDX']],
+        value='LAX'
+    ),
+
+    dcc.Dropdown(
+        id='dropdown2'
+    ),
+
+    dcc.Dropdown(id='dropdown3'),
+
+
+    dcc.Graph(id='plot')
+
+])
 
 # ------ VIEW: Create ------ #
 page_create = html.Div(
@@ -107,5 +114,3 @@ page_create = html.Div(
     ],
     style={"max-width": "500px"},
 )
-
-content = html.Div(id="page-content", style=CONTENT_STYLE)

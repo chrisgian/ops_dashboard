@@ -1,10 +1,9 @@
 import base64
-import dash_core_components as dcc
 import dash_html_components as html
 import os
 from urllib.parse import quote as urlquote
+from app import UPLOAD_DIRECTORY
 
-UPLOAD_DIRECTORY = "uploaded"
 
 def uploaded_files():
     """List the files in the upload directory."""
