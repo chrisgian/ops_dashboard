@@ -58,7 +58,6 @@ page_sidebar = html.Div(
     style=SIDEBAR_STYLE,
 )
 
-<<<<<<< HEAD:layouts.py
 
 # ------ VIEW: OTHER ------- #
 page_delete = html.P("Oh cool, this is page 4!")
@@ -67,30 +66,6 @@ page_delete = html.P("Oh cool, this is page 4!")
 page_update = html.Div(children=[
 
     html.H1(children='Hello Dash'),
-=======
-# ------ VIEW: Explore ------- #
-page_view = html.Div(
-    [
-        html.H1('Explore Existing Data'),
-        html.P("Oh cool, this is page 5!"),
-        dbc.Row(dbc.Col(html.Div("A single column"))),
-        dbc.Row(
-            [
-                dbc.Col(dcc.Slider()),
-                dbc.Col(dcc.Dropdown(id='opt-dropdown',)
-                ),
-                dbc.Col(dcc.Dropdown(
-                    options=[
-                        {'label': 'New York City', 'value': 'NYC'},
-                        {'label': 'Montreal', 'value': 'MTL'},
-                        {'label': 'San Francisco', 'value': 'SF'}
-                    ],
-                    value=['MTL', 'NYC'],
-                    multi=True
-                )),
-            ]
-        ),
->>>>>>> 05fc6e0149f5bfdd61a86e1025e195d1ecacf5df:layout.py
 
     html.Div(children='''Dash: A web application framework for Python.'''),
 
