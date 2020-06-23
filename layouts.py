@@ -1,7 +1,10 @@
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
-from styles import SIDEBAR_STYLE
+import dash_table
+from styles import CONTENT_STYLE
+from app import app
+
 
 # ------ VIEW: Explore ------- #
 page_view = html.Div(
@@ -22,51 +25,53 @@ page_view = html.Div(
                     )
                 ),
                 dbc.Col(
-
+                    dcc.Dropdown(id='dynamic_dropdown1')
                 )
             ]
         )
     ]
 )
-# ------ VIEW: SIDEBAR ------- #
+# ------ VIEW: READ ------- #
 
-page_sidebar = html.Div(
+params = [
+    'Weight', 'Torque', 'Width', 'Height',
+    'Efficiency', 'Power', 'Displacement'
+]
+page_read = html.Div(
+    [
+        html.H1('Read Data'),
+        html.P("Oh cool, this is page 5!"),
+        dbc.Row(dbc.Col(html.Div("A single column"))),
+        dash_table.DataTable(
+            id='table-editing-simple',
+            columns=(
+                [{'id': 'Model', 'name': 'Model'}] +
+                [{'id': p, 'name': p} for p in params]
+            ),
+            data=[dict(Model=i, **{param: 0 for param in params})
+                  for i in range(1, 5)],
+            editable=True
+        ),
+        dcc.Graph(id='table-editing-simple-output')
+    ]
+)
+
+# ------ VIEW: Delete ------- #
+page_delete = html.Div(
     [
         dcc.Markdown(
             '''
-            # Prototype App: Sidebar
-            [Dash Core Components Example: Sidebar Layout](https://dash-bootstrap-components.opensource.faculty.ai/examples/simple-sidebar/)
+              ## Delete something
             '''),
         html.Hr(),
-        dbc.Nav(
-            [
-                html.Div(['Explore']),
-                dbc.NavLink("View Existing", href="/page-5", id="page-5-link"),
-                html.Div(['Data Management']),
-                dbc.NavLink("Create New", href="/page-1", id="page-1-link"),
-                dbc.NavLink("Read New", href="/page-2", id="page-2-link"),
-                dbc.NavLink("Update Existing",
-                            href="/page-3", id="page-3-link"),
-                dbc.NavLink("Delete Existing",
-                            href="/page-4", id="page-4-link")
-
-            ],
-            vertical=True,
-            pills=True,
-        ),
-    ],
-    style=SIDEBAR_STYLE,
+        dcc.Dropdown(id='dropdown_filelist_delete'),
+        dbc.Button("Primary", color="danger", id="button_filelist_delete")
+    ]
 )
-
-
-# ------ VIEW: OTHER ------- #
-page_delete = html.P("Oh cool, this is page 4!")
 
 # ------ VIEW: EDIT ------- #
 page_update = html.Div(children=[
-
     html.H1(children='Hello Dash'),
-
     html.Div(children='''Dash: A web application framework for Python.'''),
 
     dcc.Dropdown(
@@ -75,14 +80,8 @@ page_update = html.Div(children=[
             {'label': i, 'value': i} for i in ['SEA', 'LAX', 'SF', 'PHL', 'PDX']],
         value='LAX'
     ),
-
-    dcc.Dropdown(
-        id='dropdown2'
-    ),
-
+    dcc.Dropdown(id='dropdown2'),
     dcc.Dropdown(id='dropdown3'),
-
-
     dcc.Graph(id='plot')
 
 ])
@@ -114,3 +113,24 @@ page_create = html.Div(
     ],
     style={"max-width": "500px"},
 )
+
+
+app.layout = html.Div([
+    dcc.Markdown(
+        '''
+        # Python Dash: Scenario Tool
+        [Learn More](https://www.google.com)
+        '''),
+    html.Div(id='hidden-div'),
+    html.Div(id='hidden-div-2'),
+    html.Hr(),
+    dcc.Tabs(id='tabs-example', value='create',
+             children=[
+                 dcc.Tab(label='Upload Scenario', children=page_create),
+                 dcc.Tab(label='Create Scenario ', children=page_read),
+                 dcc.Tab(label='Edit Scenario', children=page_update),
+                 dcc.Tab(label='Delete Scenario', children=page_delete),
+                 dcc.Tab(label='View Dependencies', children=page_view),
+             ]),
+    html.Div(id='tabs-example-content')
+], style=CONTENT_STYLE)

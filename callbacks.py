@@ -1,8 +1,12 @@
 
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
+from dash import callback_context
 from app import app
 from tools import uploaded_files, file_download_link, save_file
 import dash_html_components as html
+import pandas as pd
+from app import UPLOAD_DIRECTORY
+import os
 
 
 @app.callback(
@@ -21,7 +25,7 @@ def create_graph_figure(value):
         {'regions': ['Italian Market', 'Old town',
                      'Fishtown'],  'name': 'PHL'},
     ]
-    print(df)
+
     new_drop = [
         [{'label': x, 'value': x} for x in i['regions']]
         for i in df if i['name'] == value
@@ -30,34 +34,77 @@ def create_graph_figure(value):
 
 
 @app.callback(
-    Output("file-list", "children"),
-    [Input("upload-data", "filename"),
-     Input("upload-data", "contents")],
+    Output('hidden-div', 'children'),
+    [Input('button_filelist_delete', 'n_clicks')],
+    [State('dropdown_filelist_delete', 'value')]
 )
-def update_output(uploaded_filenames, uploaded_file_contents):
+def delete_file(n_clicks, input_value):
+    print(
+        """
+        x{}
+        y   {}
+        """.format(n_clicks,input_value)
+        )
+    if input_value is not None:
+        try:
+            os.remove("/Users/chris/projects/dash_app/uploaded/{}".format(input_value))
+        except FileNotFoundError:
+            print("Oops! No such file")
+
+
+@app.callback(
+    [Output("dynamic_dropdown1", "options"),
+     Output("dropdown_filelist_delete", "options")],
+    [Input("upload-data", "filename"),
+     Input("upload-data", "contents"),
+     Input("hidden-div", "children")
+     ]
+)
+def test_dropdown(uploaded_filenames, uploaded_file_contents, click_delete):
     """Save uploaded files and regenerate the file list."""
+
+    context = [p['prop_id'] for p in callback_context.triggered][0]
+
+    if context == 'hidden-div.children':
+        print('Refresh after delete')
+
+    files = uploaded_files()
+    files = [{'label': file, 'value': file} for file in files]
+    return files, files
+
+
+@app.callback(
+    Output("hidden-div-2", "children"),
+    [Input("upload-data", "filename"),
+     Input("upload-data", "contents")
+     ],
+)
+def save_data(uploaded_filenames, uploaded_file_contents):
+    """Save uploaded files and regenerate the file list."""
+
+    context = [p['prop_id'] for p in callback_context.triggered][0]
+
+    if context == 'hidden-div.children':
+        print('Refresh after delete')
 
     if uploaded_filenames is not None and uploaded_file_contents is not None:
         for name, data in zip(uploaded_filenames, uploaded_file_contents):
             save_file(name, data)
 
+
+@app.callback(
+    Output('file-list', 'children'),
+    [
+        Input('hidden-div-2', 'children'),
+        Input("hidden-div", "children")]
+    )
+def refresh_filelist(a,b):
     files = uploaded_files()
     if len(files) == 0:
         return [html.Li("No files yet!")]
     else:
-        #print([{'label':i,'value':i} for i in files])
         return [html.Li(file_download_link(filename)) for filename in files]
 
-
-@app.callback(
-    [Output(f"page-{i}-link", "active") for i in range(1, 4)],
-    [Input("url", "pathname")],
-)
-def toggle_active_links(pathname):
-    if pathname == "/":
-        # Treat page 1 as the homepage / index
-        return True, False, False
-    return [pathname == f"/page-{i}" for i in range(1, 4)]
 
 
 @app.callback(
@@ -78,4 +125,21 @@ def create_graph_figure(value):
         'layout': {
             'title': 'Dash Data Visualization'
         }
+    }
+
+
+@app.callback(
+    Output('table-editing-simple-output', 'figure'),
+    [Input('table-editing-simple', 'data'),
+     Input('table-editing-simple', 'columns')])
+def display_output(rows, columns):
+    df = pd.DataFrame(rows, columns=[c['name'] for c in columns])
+    return {
+        'data': [{
+            'type': 'parcoords',
+            'dimensions': [{
+                'label': col['name'],
+                'values': df[col['id']]
+            } for col in columns]
+        }]
     }
