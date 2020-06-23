@@ -1,5 +1,23 @@
 # CRUD Python Dash App
 
+## Project Structure
+```
+.
+├── app.py: Dash app instantiates here
+├── callbacks.py: Callbacks to interact server and ui
+├── download: Folder where downloaded items land
+├── index.py: This is main file to run app
+├── layouts.py: Application layout and tabs
+├── make_data.ipynb: Generate fake data
+├── readme.md: This file
+├── req.yaml: Requirements File
+├── styles.py: Styles for CSS
+├── tools.py: Helper functions
+└── uploaded: Folder where files are loaded to
+
+```
+
+
 ## Features
 
 ### Current:
@@ -18,19 +36,3 @@
 - Allow users to run a fit and predict method for data
 - tie in uploaded data into data visualization
 
-
-```
-.
-├── app.py: Dash app instantiates here
-├── callbacks.py: Callbacks to interact server and ui
-├── download: Folder where downloaded items land
-├── index.py: This is main file to run app
-├── layouts.py: Application layout and tabs
-├── make_data.ipynb: Generate fake data
-├── readme.md: This file
-├── req.yaml: Requirements File
-├── styles.py: Styles for CSS
-├── tools.py: Helper functions
-└── uploaded: Folder where files are loaded to
-
-```
