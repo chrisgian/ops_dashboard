@@ -4,7 +4,7 @@ apiai==1.2.3
 appnope==0.1.0
 attrs==19.3.0
 backcall==0.1.0
-bleach==3.1.0
+bleach==3.1.4
 Brotli==1.0.7
 certifi==2019.9.11
 cffi==1.13.2
@@ -57,7 +57,7 @@ pandocfilters==1.4.2
 parso==0.3.1
 pexpect==4.6.0
 pickleshare==0.7.4
-Pillow==6.2.1
+Pillow==6.2.2
 plotly==4.7.1
 prometheus-client==0.7.1
 prompt-toolkit==1.0.15
