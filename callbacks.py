@@ -47,7 +47,7 @@ def delete_file(n_clicks, input_value):
     if input_value is not None:
         try:
             os.remove(
-                "/Users/chris/projects/dash_app/uploaded/{}".format(input_value))
+                "./uploaded/{}".format(input_value))
         except FileNotFoundError:
             print("Oops! No such file")
 
