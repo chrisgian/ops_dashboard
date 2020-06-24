@@ -16,3 +16,14 @@ CONTENT_STYLE = {
     "margin-right": "2rem",
     "padding": "2rem 1rem",
 }
+
+UPLOADER_STYLE = {
+    "width": "100%",
+    "height": "100%",
+    "lineHeight": "100px",
+    "borderWidth": "2px",
+    "borderStyle": "dashed",
+    "borderRadius": "5px",
+    "textAlign": "center",
+    "margin": "10px",
+}
