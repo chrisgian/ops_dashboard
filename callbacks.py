@@ -43,11 +43,12 @@ def delete_file(n_clicks, input_value):
         """
         x{}
         y   {}
-        """.format(n_clicks,input_value)
-        )
+        """.format(n_clicks, input_value)
+    )
     if input_value is not None:
         try:
-            os.remove("/Users/chris/projects/dash_app/uploaded/{}".format(input_value))
+            os.remove(
+                "/Users/chris/projects/dash_app/uploaded/{}".format(input_value))
         except FileNotFoundError:
             print("Oops! No such file")
 
@@ -97,14 +98,13 @@ def save_data(uploaded_filenames, uploaded_file_contents):
     [
         Input('hidden-div-2', 'children'),
         Input("hidden-div", "children")]
-    )
-def refresh_filelist(a,b):
+)
+def refresh_filelist(a, b):
     files = uploaded_files()
     if len(files) == 0:
         return [html.Li("No files yet!")]
     else:
         return [html.Li(file_download_link(filename)) for filename in files]
-
 
 
 @app.callback(
@@ -143,3 +143,16 @@ def display_output(rows, columns):
             } for col in columns]
         }]
     }
+
+# 
+for i in range(100):
+    if ((i % 3 == 0) & (i % 5 == 0)):
+        print('{} because i ==  {}'.format('fizz buzz ', i))
+    elif i % 3 == 0:
+        print('{} because i ==  {}'.format('fizz', i))
+    elif i % 5 == 0:
+        print('{} because i == {}'.format('buzz', i))
+    else:
+        print(i)
+
+530066436334
