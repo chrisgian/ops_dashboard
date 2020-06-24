@@ -5,7 +5,6 @@ from app import app
 from tools import uploaded_files, file_download_link, save_file
 import dash_html_components as html
 import pandas as pd
-from app import UPLOAD_DIRECTORY
 import os
 
 

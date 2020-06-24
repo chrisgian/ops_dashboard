@@ -9,6 +9,8 @@ import callbacks
 if not os.path.exists(UPLOAD_DIRECTORY):
     os.makedirs(UPLOAD_DIRECTORY)
 
+server = app.server # Heroku needs this in index.py for it to work
+
 app.config.suppress_callback_exceptions = True
 
 
