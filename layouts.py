@@ -17,8 +17,8 @@ page_view = html.Div(
             dbc.Col(dcc.Dropdown(options=[
                 {'label': 'New York City', 'value': 'NYC'},
                 {'label': 'Montreal', 'value': 'MTL'},
-                {'label': 'San Francisco', 'value': 'SF'}])),
-            dbc.Col(dcc.Dropdown(id='dynamic_dropdown1'))])])
+                {'label': 'San Francisco', 'value': 'SF'}]))
+            ])])
 # ------ VIEW: READ ------- #
 
 params = ['Weight', 'Torque', 'Width', 'Height',
@@ -76,18 +76,20 @@ page_update = html.Div(children=[
     html.Hr(),
     html.Br(),
     dbc.Row(
-        [dbc.Col(
-            dcc.Dropdown(
-                id='dropdown',
-                options=[{'label': i, 'value': i}
-                         for i in ['SEA', 'LAX', 'SF', 'PHL', 'PDX']],
-                value='LAX',
-            )),
-         dbc.Col(dcc.Dropdown(id='dropdown2')),
-         dbc.Col(dcc.Dropdown(id='dropdown3'))]
+        [
+         dbc.Col(dcc.Dropdown(id='dropdown_filelist_load')),
+         dbc.Col(
+             [
+                 dbc.Button("Load", color="danger", id="button_file_load"),
+                 "  ",
+                 dbc.Button("Reset", color = "danger", id= "button_file_reset")]
+            )
+         ]
     ),
     html.Br(),
-    dcc.Graph(id='plot')
+    dbc.Row(
+        html.Div(id = 'table_loaded')
+    )
 
 ])
 
@@ -155,6 +157,10 @@ app.layout = html.Div([
         '''),
     html.Div(id='hidden-div'),
     html.Div(id='hidden-div-2'),
+    dcc.ConfirmDialog(
+        id='confirm',
+        message='Danger danger! Are you sure you want to continue?',
+    ),
     html.Hr(),
     dcc.Tabs(id='tabs-example', value='welcome',
              children=[

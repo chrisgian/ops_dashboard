@@ -13,6 +13,5 @@ server = app.server # Heroku needs this in index.py for it to work
 
 app.config.suppress_callback_exceptions = True
 
-
 if __name__ == '__main__':
     app.run_server(debug=True)
