@@ -105,7 +105,11 @@ def load_selected_table(n_clicks_load, n_clicks_reset, input_value):
     if input_value is not None and context == 'button_file_load.n_clicks':
         try:
             df_loaded = pd.read_csv(
+<<<<<<< HEAD
                 os.path.join(UPLOAD_DIRECTORY, input_value)
+=======
+                "./{}/{}".format(UPLOAD_DIRECTORY, input_value))
+>>>>>>> 1b5d42749affa0d429484d11e9a349ff9ff1272e
             return [
                 DataTable(
                     id='table',
