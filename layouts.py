@@ -18,7 +18,7 @@ page_view = html.Div(
                 {'label': 'New York City', 'value': 'NYC'},
                 {'label': 'Montreal', 'value': 'MTL'},
                 {'label': 'San Francisco', 'value': 'SF'}]))
-            ])])
+        ])])
 # ------ VIEW: READ ------- #
 
 params = ['Weight', 'Torque', 'Width', 'Height',
@@ -44,25 +44,6 @@ page_read = html.Div(
 )
 
 
-# ------ VIEW: Delete ------- #
-
-page_delete = html.Div(
-    [
-        html.Br(),
-        html.Br(),
-        dcc.Markdown(
-            '''
-              ### Data Management: Delete
-
-              On this page, you can delete a file that you uploaded. Simply select the file of interest and click 'Delete'.
-            '''),
-        html.Hr(),
-        dcc.Dropdown(id='dropdown_filelist_delete'),
-        html.Br(),
-        dbc.Button("Delete", color="danger", id="button_filelist_delete")
-    ]
-)
-
 # ------ VIEW: EDIT ------- #
 
 page_update = html.Div(children=[
@@ -77,18 +58,26 @@ page_update = html.Div(children=[
     html.Br(),
     dbc.Row(
         [
-         dbc.Col(dcc.Dropdown(id='dropdown_filelist_load')),
-         dbc.Col(
-             [
-                 dbc.Button("Load", color="danger", id="button_file_load"),
-                 "  ",
-                 dbc.Button("Reset", color = "danger", id= "button_file_reset")]
+            dbc.Col(dcc.Dropdown(id='dropdown_filelist_load')),
+            dbc.Col(
+                [
+                    dbc.Button("Load", color="danger", id="button_file_load"),
+                    "  ",
+                    dbc.Button("Reset", color="danger",
+                               id="button_file_reset"),
+                    "  ",
+                    dbc.Button("Save", color="danger", id="button_file_save"),
+                    "  ",
+                    dbc.Button("Overwrite", color="danger", id="button_file_overwrite"),
+                    "  ",
+                    dbc.Button("Delete", color="danger", id="button_file_delete")],
+                    
             )
-         ]
+        ]
     ),
     html.Br(),
     dbc.Row(
-        html.Div(id = 'table_loaded')
+        dash_table.DataTable(id='editable_table', editable=True)
     )
 
 ])
@@ -97,8 +86,8 @@ page_update = html.Div(children=[
 page_welcome = html.Div([
     html.Br(),
     html.Br(),
-     dcc.Markdown(
-         '''
+    dcc.Markdown(
+        '''
          ### Overview
          
          At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
@@ -136,6 +125,7 @@ page_create = html.Div(
                 ),
                 dbc.Col(
                     [html.H2("File List"),
+                     html.P("(Click to Download)"),
                      html.Br(),
                      html.Ul(id="file-list")]
                 )
@@ -157,6 +147,7 @@ app.layout = html.Div([
         '''),
     html.Div(id='hidden-div'),
     html.Div(id='hidden-div-2'),
+    html.Div(id='hidden-div-save'),
     dcc.ConfirmDialog(
         id='confirm',
         message='Danger danger! Are you sure you want to continue?',
@@ -165,11 +156,10 @@ app.layout = html.Div([
     dcc.Tabs(id='tabs-example', value='welcome',
              children=[
                  dcc.Tab(label='Overview', children=page_welcome,
-                  value= 'welcome'),
+                         value='welcome'),
                  dcc.Tab(label='Upload Scenario', children=page_create),
                  dcc.Tab(label='Create Scenario ', children=page_read),
-                 dcc.Tab(label='Edit Scenario', children=page_update),
-                 dcc.Tab(label='Delete Scenario', children=page_delete),
+                 dcc.Tab(label='Manage Existing', children=page_update),
                  dcc.Tab(label='View Dependencies', children=page_view),
              ]),
     html.Div(id='tabs-example-content')
