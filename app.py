@@ -7,7 +7,11 @@ UPLOAD_DIRECTORY = "uploaded"
 
 server = Flask(__name__)
 
-app = dash.Dash(external_stylesheets=[dbc.themes.SIMPLEX], server=server)
+app = dash.Dash(
+    external_stylesheets=[dbc.themes.SIMPLEX], 
+    server=server,
+    meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}]
+    )
 
 
 @server.route("/download/<path:path>")
